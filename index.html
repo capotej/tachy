@@ -12,43 +12,38 @@ body {
 <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" /> 
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js"></script><style> 
-.funcs {
-    margin:10px 10px 10px 10px;
-    width:90%;
-    max-width: 800px;
-    height:400px;
-}
-</style> 
- 
+<script type="text/javascript" src="http://smoothiecharts.org/smoothie.js"></script>
 
+ </head>
+<body>
 <script type="text/javascript">
+Array.prototype.sum = function(){
+	for(var i=0,sum=0;i<this.length;sum+=this[i++]);
+	return sum;
+}
 
-    var render_chart = function(name, data){
-				YUI().use('charts', function(Y){ 
-						var chart_data = []
-//								{category:"5/5/2010", values:5000}
-						$.each(data, function(index, value){
-								var arr = value.split(':')
-								var time = arr[0]
-								var score = arr[1]
-								chart_data.push({category: time, score: score})
-						})
-						
-						var mychart = new Y.Chart({dataProvider:chart_data, render:"#" + name});
-				});
+
+		var charts = {}
+
+    var render_chart = function(name){
+				var chart = new SmoothieChart()
+				chart.addTimeSeries(charts[name], { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 })
+				chart.streamTo(document.getElementById(name))
+			
 		}
 
 
 		var list_template = function(name){
-				return '<div id="' + name + '" class="funcs"></div>'
+				return '<div><h2>'+name+'</h2><canvas id="' + name + '" class="funcs"></canvas></div>'
 		}
 
     var retrieve_func_data = function(name){
-				$.getJSON('/api/view/' + name + '/', function(data){
-						$("#test_func").empty()
-						render_chart(name, data)
-
+				$.get('/api/view/' + name + '/', function(data){
+						var arr = data.split(':')
+						console.log(arr)
+						var time = arr[0]
+						var score = parseInt(arr[1])
+						charts[name].append(new Date().getTime(), score)
 				})
 		}
 
@@ -56,9 +51,11 @@ body {
 				$.getJSON('/api/funcs', function(data){
 						$.each(data, function(index, object){
 								$('#container').append(list_template(object))
+								charts[object] = new TimeSeries()
 								setInterval(function(){
 										retrieve_func_data(object)
-								}, 1000)
+							  }, 1000)
+								render_chart(object)
 						})
 				})
 		}
@@ -66,8 +63,6 @@ $(function(){
 		display_available_funcs()
 })
 </script>  
-</head>
-<body>
 <h1>Tachy</h1>
 <div id="container">
 </div>

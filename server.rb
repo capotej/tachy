@@ -48,11 +48,11 @@ class TachyServer < EM::Connection
     end
     if @http_request_uri.include?("/api/view")
       func_name = @http_request_uri.split("/").last.gsub('/','')
-      $redis.lrange(func_name, 0, WINDOW_SIZE) do |range|
+      $redis.lrange(func_name, 100, WINDOW_SIZE) do |last|
         response = EM::DelegatedHttpResponse.new(self)
         response.status = 200
-        response.content_type 'application/json'
-        response.content = range.to_json
+        response.content_type 'text/plain'
+        response.content = last[0]
         response.send_response
       end
     end
