@@ -40,7 +40,6 @@ Array.prototype.sum = function(){
     var retrieve_func_data = function(name){
 				$.get('/api/view/' + name + '/', function(data){
 						var arr = data.split(':')
-						console.log(arr)
 						var time = arr[0]
 						var score = parseInt(arr[1])
 						charts[name].append(new Date().getTime(), score)
