@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Tachy</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js"></script>
+
+<script type="text/javascript">
+		var list_template = function(name){
+				return '<div id="' + name + '" class="funcs"><h3>' + name + '</div>'
+		}
+
+    var retrieve_func_data = function(name){
+				$.getJSON('/api/view/' + name + '/', function(data){
+						console.log(name)
+						$("#test_func").empty()
+						$.each(data, function(_, value){
+								$("#test_func").append(value)
+								$("#test_func").append("<br/>")
+						})
+
+				})
+		}
+
+		var display_available_funcs = function(){
+				$.getJSON('/api/funcs', function(data){
+						$.each(data, function(index, object){
+								$('#container').append(list_template(object))
+								setInterval(function(){
+										retrieve_func_data(object)
+								}, 1000)
+						})
+				})
+		}
+$(function(){
+		display_available_funcs()
+})
+</script>  
+</head>
+<body>
+<h1>Tachy</h1>
+<div id="container">
+</div>
+</body>
+</html>
