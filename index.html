@@ -23,7 +23,8 @@ Array.prototype.sum = function(){
 }
 
 
-		var charts = {}
+    var intervals = {}
+    var charts = {}
 
     var render_chart = function(name){
 				var chart = new SmoothieChart()
@@ -49,17 +50,22 @@ Array.prototype.sum = function(){
 		var display_available_funcs = function(){
 				$.getJSON('/api/funcs', function(data){
 						$.each(data, function(index, object){
-								$('#container').append(list_template(object))
-								charts[object] = new TimeSeries()
-								setInterval(function(){
-										retrieve_func_data(object)
-							  }, 1000)
-								render_chart(object)
+								if(intervals[object] == undefined){
+										$('#container').append(list_template(object))
+										charts[object] = new TimeSeries()
+										setInterval(function(){
+												retrieve_func_data(object)
+										}, 500)
+										render_chart(object)
+										intervals[object] = true
+								}
 						})
 				})
 		}
 $(function(){
-		display_available_funcs()
+		setInterval(function(){
+				display_available_funcs()
+		}, 1000)
 })
 </script>  
 <h1>Tachy</h1>
