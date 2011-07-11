@@ -1,22 +1,53 @@
 <html>
-<head>
+<head> 
 <title>Tachy</title>
+<style type="text/css"> 
+body {
+	margin:0;
+	padding:0;
+}
+
+</style> 
+ 
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" /> 
+
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js"></script><style> 
+.funcs {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style> 
+ 
 
 <script type="text/javascript">
+
+    var render_chart = function(name, data){
+				YUI().use('charts', function(Y){ 
+						var chart_data = []
+//								{category:"5/5/2010", values:5000}
+						$.each(data, function(index, value){
+								var arr = value.split(':')
+								var time = arr[0]
+								var score = arr[1]
+								chart_data.push({category: time, score: score})
+						})
+						
+						var mychart = new Y.Chart({dataProvider:chart_data, render:"#" + name});
+				});
+		}
+
+
 		var list_template = function(name){
-				return '<div id="' + name + '" class="funcs"><h3>' + name + '</div>'
+				return '<div id="' + name + '" class="funcs"></div>'
 		}
 
     var retrieve_func_data = function(name){
 				$.getJSON('/api/view/' + name + '/', function(data){
-						console.log(name)
 						$("#test_func").empty()
-						$.each(data, function(_, value){
-								$("#test_func").append(value)
-								$("#test_func").append("<br/>")
-						})
+						render_chart(name, data)
 
 				})
 		}

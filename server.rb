@@ -3,7 +3,7 @@ Bundler.require
 require 'cgi'
 require 'json'
 
-WINDOW_SIZE = 1000
+WINDOW_SIZE = 100
 
 class TachyServer < EM::Connection
   include EM::HttpServer
